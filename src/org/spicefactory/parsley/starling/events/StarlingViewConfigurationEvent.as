@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-package org2.spicefactory.parsley.starling.events
+package org.spicefactory.parsley.starling.events
 {
 import org.spicefactory.parsley.core.view.impl.DefaultViewConfiguration;
 
 import starling.display.DisplayObject;
 
 import starling.events.Event;
-
 
 /**
  * Event that fires when one or more view components wish to get processed by the nearest Context.
@@ -33,8 +32,8 @@ import starling.events.Event;
  *
  * @author Jens Halm
  */
-public class StarlingViewConfigurationEvent extends Event {
-
+public class StarlingViewConfigurationEvent extends Event
+{
 
     /**
      * Constant for the type of bubbling event explicitly fired by a view component that wishes to get
@@ -42,7 +41,7 @@ public class StarlingViewConfigurationEvent extends Event {
      *
      * @eventType configureView
      */
-    public static const STARLING_CONFIGURE_VIEW : String = "starlingConfigureView";
+    public static const STARLING_CONFIGURE_VIEW:String = "starlingConfigureView";
 
     /**
      * Constant for the type of bubbling event automatically fired when a view component is a canididate
@@ -52,7 +51,7 @@ public class StarlingViewConfigurationEvent extends Event {
      *
      * @eventType autowireView
      */
-    public static const STARLING_AUTOWIRE_VIEW : String = "starlingAutowireView";
+    public static const STARLING_AUTOWIRE_VIEW:String = "starlingAutowireView";
 
     private var _received:Boolean;
 
@@ -67,7 +66,8 @@ public class StarlingViewConfigurationEvent extends Event {
      * @param the view that is an autowiring candidate
      * @return a new event instance
      */
-    public static function forAutowiring (view:DisplayObject) : StarlingViewConfigurationEvent {
+    public static function forAutowiring(view:DisplayObject):StarlingViewConfigurationEvent
+    {
         return new StarlingViewConfigurationEvent(STARLING_AUTOWIRE_VIEW, [new DefaultViewConfiguration(view)]);
     }
 
@@ -82,8 +82,8 @@ public class StarlingViewConfigurationEvent extends Event {
      * @param configId the configuration id to use to fetch matching definitions from the Context
      * @return a new event instance
      */
-    public static function forExplicitTarget (view:DisplayObject, target:Object = null, configId:String = null)
-            : StarlingViewConfigurationEvent {
+    public static function forExplicitTarget(view:DisplayObject, target:Object = null, configId:String = null):StarlingViewConfigurationEvent
+    {
         return new StarlingViewConfigurationEvent(STARLING_CONFIGURE_VIEW, [new DefaultViewConfiguration(view, target, configId)]);
     }
 
@@ -95,11 +95,10 @@ public class StarlingViewConfigurationEvent extends Event {
      * @param callback the no-arg callback to invoke after processing of this event has completed
      * @return a new event instance
      */
-    public static function forConfigurations (configurations:Array, callback:Function = null) : StarlingViewConfigurationEvent {
+    public static function forConfigurations(configurations:Array, callback:Function = null):StarlingViewConfigurationEvent
+    {
         return new StarlingViewConfigurationEvent(STARLING_CONFIGURE_VIEW, configurations, callback);
     }
-
-
 
     /**
      * Creates a new event instance.
@@ -107,7 +106,8 @@ public class StarlingViewConfigurationEvent extends Event {
      * @param type the type of the event
      * @param configurations one or more ViewConfigurations that should get processed
      */
-    public function StarlingViewConfigurationEvent (type:String, configurations:Array, callback:Function = null) {
+    public function StarlingViewConfigurationEvent(type:String, configurations:Array, callback:Function = null)
+    {
         super(type, true);
         _configurations = configurations;
         this.callback = callback;
@@ -116,39 +116,42 @@ public class StarlingViewConfigurationEvent extends Event {
     /**
      * The view configurations to get processed.
      */
-    public function get configurations () : Array {
+    public function get configurations():Array
+    {
         return _configurations;
     }
 
     /**
      * Indicates whether this event instance has already been processed by a Context.
      */
-    public function get received () : Boolean {
+    public function get received():Boolean
+    {
         return _received;
     }
 
     /**
      * Marks this event instance as received by a corresponding Context.
      */
-    public function markAsReceived () : void {
+    public function markAsReceived():void
+    {
         _received = true;
     }
 
     /**
      * Marks this event instance as processed by a corresponding Context.
      */
-    public function markAsCompleted () : void {
+    public function markAsCompleted():void
+    {
         if (callback != null) callback();
     }
-
 
     /**
      * @private
      */
-    public function clone () : Event {
+    public function clone():Event
+    {
         return new StarlingViewConfigurationEvent(type, configurations, callback);
     }
-
 
 }
 

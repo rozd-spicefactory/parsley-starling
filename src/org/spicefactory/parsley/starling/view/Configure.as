@@ -5,7 +5,7 @@
  * Time: 10:02 AM
  * To change this template use File | Settings | File Templates.
  */
-package org2.spicefactory.parsley.starling.view
+package org.spicefactory.parsley.starling.view
 {
 import org.spicefactory.lib.logging.LogContext;
 import org.spicefactory.lib.logging.Logger;
@@ -15,7 +15,8 @@ import org.spicefactory.parsley.core.view.ViewConfiguration;
 import org.spicefactory.parsley.core.view.ViewLifecycle;
 import org.spicefactory.parsley.core.view.ViewProcessor;
 import org.spicefactory.parsley.core.view.impl.DefaultViewConfiguration;
-import org2.spicefactory.parsley.starling.events.StarlingViewConfigurationEvent;
+
+import org.spicefactory.parsley.starling.events.StarlingViewConfigurationEvent;
 
 import starling.display.DisplayObject;
 import starling.events.Event;
@@ -23,7 +24,6 @@ import starling.events.Event;
 public class Configure
 {
     private static const log:Logger = LogContext.getLogger(Configure);
-
 
     private var _view:DisplayObject;
     private var _target:Object;
@@ -37,7 +37,6 @@ public class Configure
 
     private var _completeHandler:Function;
 
-
     /**
      * The view that demarcates the lifecycle of the target instance to be configured.
      * The view may be the same instance as the target itself or a different one
@@ -49,18 +48,18 @@ public class Configure
      * @param view the view that demarcates the lifecycle of the target instance
      * @return a new Configure instance for further setup options
      */
-    public static function view (view:DisplayObject) : Configure {
+    public static function view(view:DisplayObject):Configure
+    {
         return new Configure(view);
     }
-
 
     /**
      * @private
      */
-    function Configure (view:DisplayObject) {
+    function Configure(view:DisplayObject)
+    {
         _view = view;
     }
-
 
     /**
      * The target to get processed by the nearest Context in the view hierarchy.
@@ -68,7 +67,8 @@ public class Configure
      * @param target the target to get processed by the nearest Context in the view hierarchy
      * @return this Configure instance for method chaining
      */
-    public function target (target:Object) : Configure {
+    public function target(target:Object):Configure
+    {
         _target = target;
         return this;
     }
@@ -85,7 +85,8 @@ public class Configure
      * lifecycles of the view
      * @return this Configure instance for method chaining
      */
-    public function reuse (value:Boolean) : Configure {
+    public function reuse(value:Boolean):Configure
+    {
         _reuse = new Flag(value);
         return this;
     }
@@ -99,7 +100,8 @@ public class Configure
      * from the stage
      * @return this Configure instance for method chaining
      */
-    public function autoremove (value:Boolean) : Configure {
+    public function autoremove(value:Boolean):Configure
+    {
         _autoremove = new Flag(value);
         return this;
     }
@@ -112,7 +114,8 @@ public class Configure
      * @param processor the processor to use for the target instance
      * @return this Configure instance for method chaining
      */
-    public function processor (processor:ViewProcessor) : Configure {
+    public function processor(processor:ViewProcessor):Configure
+    {
         _processor = processor;
         return this;
     }
@@ -125,7 +128,8 @@ public class Configure
      * @param lifecycle the instance that controls the lifecycle of the view
      * @return this Configure instance for method chaining
      */
-    public function lifecycle (lifecycle:ViewLifecycle) : Configure {
+    public function lifecycle(lifecycle:ViewLifecycle):Configure
+    {
         _lifecycle = lifecycle;
         return this;
     }
@@ -139,7 +143,8 @@ public class Configure
      * @param definition the object definition to use to configure the target
      * @return this Configure instance for method chaining
      */
-    public function definition (definition:DynamicObjectDefinition) : Configure {
+    public function definition(definition:DynamicObjectDefinition):Configure
+    {
         _definition = definition;
         return this;
     }
@@ -154,7 +159,8 @@ public class Configure
      * matching this target instance
      * @return this Configure instance for method chaining
      */
-    public function configId (configId:String) : Configure {
+    public function configId(configId:String):Configure
+    {
         _configId = configId;
         return this;
     }
@@ -165,41 +171,48 @@ public class Configure
      * @param callback a callback to invoke when the processing of the view configuration has been completed
      * @return this Configure instance for method chaining
      */
-    public function complete (callback:Function) : Configure {
+    public function complete(callback:Function):Configure
+    {
         _completeHandler = callback;
         return this;
     }
 
-
     /**
      * Executes this view configuration at the nearest Context in the view hierarchy.
      */
-    public function execute () : void {
-        if (!_view.stage) {
+    public function execute():void
+    {
+        if (!_view.stage)
+        {
             _view.addEventListener(Event.ADDED_TO_STAGE, addedToStage);
         }
-        else {
+        else
+        {
             dispatchEvent();
         }
     }
 
-    private function addedToStage (event:Event) : void {
+    private function addedToStage(event:Event):void
+    {
         _view.removeEventListener(Event.ADDED_TO_STAGE, addedToStage);
         dispatchEvent();
     }
 
-    private function dispatchEvent () : void {
+    private function dispatchEvent():void
+    {
         var config:ViewConfiguration = new DefaultViewConfiguration(_view, _target, _configId);
         config.reuse = _reuse;
         config.autoremove = _autoremove;
         config.processor = _processor;
         config.lifecycle = _lifecycle;
         config.definition = _definition;
-        var event:StarlingViewConfigurationEvent = StarlingViewConfigurationEvent.forConfigurations([config], _completeHandler);
+        var event:StarlingViewConfigurationEvent =
+                StarlingViewConfigurationEvent.forConfigurations([config], _completeHandler);
         _view.dispatchEvent(event);
-        if (!event.received) {
+        if (!event.received)
+        {
             log.warn("View configuration could not be processed for target " + config.target
-                    + ": no Context found in view hierarchy");
+                             + ": no Context found in view hierarchy");
         }
     }
 }

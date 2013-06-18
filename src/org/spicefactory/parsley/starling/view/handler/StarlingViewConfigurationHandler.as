@@ -5,7 +5,7 @@
  * Time: 10:18 AM
  * To change this template use File | Settings | File Templates.
  */
-package org2.spicefactory.parsley.starling.view.handler
+package org.spicefactory.parsley.starling.view.handler
 {
 import org.spicefactory.lib.logging.LogContext;
 import org.spicefactory.lib.logging.Logger;
@@ -27,21 +27,44 @@ import org.spicefactory.parsley.core.view.lifecycle.CustomEventLifecycle;
 import org.spicefactory.parsley.core.view.metadata.Autoremove;
 import org.spicefactory.parsley.core.view.util.ViewDefinitionLookup;
 
-import org2.spicefactory.parsley.starling.events.StarlingViewConfigurationEvent;
-import org2.spicefactory.parsley.starling.view.lifecycle.StarlingAutoremoveLifecycle;
-import org2.spicefactory.parsley.starling.view.util.ContextAwareEventHandler;
+import org.spicefactory.parsley.starling.events.StarlingViewConfigurationEvent;
+import org.spicefactory.parsley.starling.view.lifecycle.StarlingAutoremoveLifecycle;
+import org.spicefactory.parsley.starling.view.util.ContextAwareEventHandler;
 
 import starling.display.DisplayObject;
 import starling.events.Event;
 
+/**
+ * Adapted ViewConfigurationHandler core class for using with Starling.
+ *
+ * @see Original org.spicefactory.parsley.core.view.handler.ViewConfigurationHandler
+ */
 public class StarlingViewConfigurationHandler implements ViewRootHandler
 {
+    //--------------------------------------------------------------------------
+    //
+    //  Class constants
+    //
+    //--------------------------------------------------------------------------
+
     private static const log:Logger = LogContext.getLogger(StarlingViewConfigurationHandler);
+
+    //--------------------------------------------------------------------------
+    //
+    //  Constructor
+    //
+    //--------------------------------------------------------------------------
 
     public function StarlingViewConfigurationHandler()
     {
         super();
     }
+
+    //--------------------------------------------------------------------------
+    //
+    //  Variables
+    //
+    //--------------------------------------------------------------------------
 
     private var context:Context;
     private var settings:ViewSettings;
@@ -50,6 +73,16 @@ public class StarlingViewConfigurationHandler implements ViewRootHandler
     private var autowireHandler:ContextAwareEventHandler;
 
     private var activeConfigs:Array = [];
+
+    //--------------------------------------------------------------------------
+    //
+    //  Methods
+    //
+    //--------------------------------------------------------------------------
+
+    //------------------------------------
+    //  Methods: ViewRootHandler
+    //------------------------------------
 
     public function init(context:Context, settings:ViewSettings):void
     {
@@ -63,7 +96,8 @@ public class StarlingViewConfigurationHandler implements ViewRootHandler
     {
         explicitHandler.dispose();
         autowireHandler.dispose();
-        for each (var config:ViewConfiguration in activeConfigs) {
+        for each (var config:ViewConfiguration in activeConfigs)
+        {
             disposeLifecycle(config);
         }
         activeConfigs = null;
@@ -91,57 +125,68 @@ public class StarlingViewConfigurationHandler implements ViewRootHandler
         }
     }
 
-    private function disposeLifecycle (config:ViewConfiguration) : void {
-        if (config.lifecycle) {
+    //------------------------------------
+    //  Methods: internal
+    //------------------------------------
+
+    private function disposeLifecycle(config:ViewConfiguration):void
+    {
+        if (config.lifecycle)
+        {
             config.lifecycle.stop();
             config.lifecycle.removeEventListener(ViewLifecycleEvent.DESTROY_VIEW, viewDestroyed);
             config.lifecycle.removeEventListener(ViewLifecycleEvent.INIT_VIEW, viewInitialized);
         }
     }
 
-    //------------------------------------
-    //  Methods: configuration
-    //------------------------------------
-
-    private function processConfiguration (config:ViewConfiguration) : void {
+    private function processConfiguration(config:ViewConfiguration):void
+    {
         activeConfigs.push(config);
         log.debug("Process view '{0}' with {1}", config.target, context);
-        if (!config.lifecycle) {
+        if (!config.lifecycle)
+        {
             config.lifecycle = getLifecycle(config);
         }
-        if (!config.processor) {
+        if (!config.processor)
+        {
             config.processor = settings.viewProcessor.newInstance() as ViewProcessor;
         }
-        if (!config.reuse) {
+        if (!config.reuse)
+        {
             config.reuse = new Flag(settings.reuseComponents);
         }
         config.processor.init(config, context);
-        if (config.lifecycle) {
+        if (config.lifecycle)
+        {
             config.lifecycle.addEventListener(ViewLifecycleEvent.DESTROY_VIEW, viewDestroyed);
-            if (config.reuse && config.reuse.value) {
+            if (config.reuse && config.reuse.value)
+            {
                 config.lifecycle.addEventListener(ViewLifecycleEvent.INIT_VIEW, viewInitialized);
             }
             config.lifecycle.start(config, context);
         }
     }
 
-    private function getLifecycle (config:ViewConfiguration) : ViewLifecycle {
+    private function getLifecycle(config:ViewConfiguration):ViewLifecycle
+    {
         var lifecycle:ViewLifecycle = settings.newViewLifecycle(config.view);
-        if (!lifecycle) {
+        if (!lifecycle)
+        {
             var autoremove:Boolean
                     = (config.autoremove)
                     ? config.autoremove.value :
                     settings.autoremoveComponents;
-            if (autoremove) {
+            if (autoremove)
+            {
                 lifecycle = new StarlingAutoremoveLifecycle();
             }
-            else {
+            else
+            {
                 lifecycle = new CustomEventLifecycle();
             }
         }
         return lifecycle;
     }
-
 
     //--------------------------------------------------------------------------
     //
@@ -153,24 +198,29 @@ public class StarlingViewConfigurationHandler implements ViewRootHandler
     //  Handlers: explicit wiring
     //---------------------------------
 
-    private function handleExplicitEvent (event:Event) : void {
+    private function handleExplicitEvent(event:Event):void
+    {
         event.stopImmediatePropagation();
-        if (event is StarlingViewConfigurationEvent) {
+        if (event is StarlingViewConfigurationEvent)
+        {
             StarlingViewConfigurationEvent(event).markAsReceived();
         }
         explicitHandler.handleEvent(event);
     }
 
-    private function processExplicitEvent (event:Event) : void {
+    private function processExplicitEvent(event:Event):void
+    {
         var configs:Array = (event is StarlingViewConfigurationEvent)
                 ? StarlingViewConfigurationEvent(event).configurations
                 : [new DefaultViewConfiguration(DisplayObject(event.target))];
 
-        for each (var config:ViewConfiguration in configs) {
+        for each (var config:ViewConfiguration in configs)
+        {
             processConfiguration(config);
         }
 
-        if (event is StarlingViewConfigurationEvent) {
+        if (event is StarlingViewConfigurationEvent)
+        {
             StarlingViewConfigurationEvent(event).markAsCompleted();
         }
     }
@@ -179,31 +229,40 @@ public class StarlingViewConfigurationHandler implements ViewRootHandler
     //  Handlers: explicit wiring
     //---------------------------------
 
-    private function prefilterView (event:Event) : void {
+    private function prefilterView(event:Event):void
+    {
         if (!AutowirePrefilterCache.addEvent(event)) return;
         var view:DisplayObject = event.target as DisplayObject;
-        if (settings.autowireFilter.prefilter(view) && !GlobalState.objects.isManaged(view)) {
+        if (settings.autowireFilter.prefilter(view) && !GlobalState.objects.isManaged(view))
+        {
             view.dispatchEvent(StarlingViewConfigurationEvent.forAutowiring(view));
         }
     }
 
-    private function handleAutowireEvent (event:Event) : void {
+    private function handleAutowireEvent(event:Event):void
+    {
         event.stopImmediatePropagation();
         autowireHandler.handleEvent(event);
     }
 
-    private function processAutowireEvent (event:StarlingViewConfigurationEvent) : void {
-        for each (var config:ViewConfiguration in event.configurations) {
+    private function processAutowireEvent(event:StarlingViewConfigurationEvent):void
+    {
+        for each (var config:ViewConfiguration in event.configurations)
+        {
             var mode:ViewAutowireMode = settings.autowireFilter.filter(config.view);
-            if (mode == ViewAutowireMode.NEVER) {
+            if (mode == ViewAutowireMode.NEVER)
+            {
                 return;
             }
-            if (mode == ViewAutowireMode.CONFIGURED && config.definition == null) {
+            if (mode == ViewAutowireMode.CONFIGURED && config.definition == null)
+            {
                 config.definition = ViewDefinitionLookup.findMatchingDefinition(config, context);
-                if (config.definition == null) {
+                if (config.definition == null)
+                {
                     return;
                 }
-                if (!config.autoremove) {
+                if (!config.autoremove)
+                {
                     setAutoremoveFromMetadata(config);
                 }
             }
@@ -211,9 +270,11 @@ public class StarlingViewConfigurationHandler implements ViewRootHandler
         }
     }
 
-    private function setAutoremoveFromMetadata (config:ViewConfiguration) : void {
+    private function setAutoremoveFromMetadata(config:ViewConfiguration):void
+    {
         var info:ClassInfo = ClassInfo.forInstance(config.view, context.domain);
-        if (info.hasMetadata(Autoremove)) {
+        if (info.hasMetadata(Autoremove))
+        {
             config.autoremove = new Flag((info.getMetadata(Autoremove)[0] as Autoremove).value);
         }
     }
@@ -222,15 +283,18 @@ public class StarlingViewConfigurationHandler implements ViewRootHandler
     //  Handlers: lifecycle
     //---------------------------------
 
-    private function viewDestroyed (event:ViewLifecycleEvent) : void {
+    private function viewDestroyed(event:ViewLifecycleEvent):void
+    {
         event.configuration.processor.destroy();
-        if (!event.configuration.reuse || !event.configuration.reuse.value) {
+        if (!event.configuration.reuse || !event.configuration.reuse.value)
+        {
             disposeLifecycle(event.configuration);
             ArrayUtil.remove(activeConfigs, event.configuration);
         }
     }
 
-    private function viewInitialized (event:ViewLifecycleEvent) : void {
+    private function viewInitialized(event:ViewLifecycleEvent):void
+    {
         event.configuration.processor.init(event.configuration, context);
     }
 }

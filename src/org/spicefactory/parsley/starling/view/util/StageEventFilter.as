@@ -5,11 +5,16 @@
  * Time: 11:39 AM
  * To change this template use File | Settings | File Templates.
  */
-package org2.spicefactory.parsley.starling.view.util
+package org.spicefactory.parsley.starling.view.util
 {
 import starling.display.DisplayObject;
 import starling.events.Event;
 
+/**
+ * Adapted StageEventFilter core class to compatible with Starling.
+ *
+ * @see org.spicefactory.parsley.core.view.util.StageEventFilter
+ */
 public class StageEventFilter
 {
     /**
@@ -19,7 +24,7 @@ public class StageEventFilter
      * @param removedHandler the handler to invoke for filtered removedFromStage events
      * @param removedHandler the handler to invoke for filtered addedToStage events
      */
-    function StageEventFilter (view:DisplayObject, removedHandler:Function, addedHandler:Function = null)
+    function StageEventFilter(view:DisplayObject, removedHandler:Function, addedHandler:Function = null)
     {
         this.view = view;
         this.removedHandler = removedHandler;
@@ -36,19 +41,19 @@ public class StageEventFilter
     /**
      * Instructs this filter to stop listening to stage events.
      */
-    public function dispose () : void
+    public function dispose():void
     {
         view.removeEventListener(Event.ADDED_TO_STAGE, addedToStage);
         view.removeEventListener(Event.REMOVED_FROM_STAGE, removedFromStage);
     }
 
-    private function addedToStage (event:Event) : void
+    private function addedToStage(event:Event):void
     {
         if (addedHandler != null)
             addedHandler(view);
     }
 
-    private function removedFromStage (event:Event) : void
+    private function removedFromStage(event:Event):void
     {
         removedHandler(view);
     }
