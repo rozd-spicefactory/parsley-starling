@@ -109,6 +109,7 @@ public class StarlingViewConfigurationHandler implements ViewRootHandler
 
         if (settings.autowireComponents)
         {
+            // handles bubbled events from nested views
             view.addEventListener(settings.autowireFilter.eventType, prefilterView);
             view.addEventListener(StarlingViewConfigurationEvent.STARLING_AUTOWIRE_VIEW, handleAutowireEvent);
         }
@@ -226,9 +227,10 @@ public class StarlingViewConfigurationHandler implements ViewRootHandler
     }
 
     //---------------------------------
-    //  Handlers: explicit wiring
+    //  Handlers: auto wiring
     //---------------------------------
 
+    /* Handles only event on bubbles phase, due to Starling's event model has not the capture */
     private function prefilterView(event:Event):void
     {
         if (!AutowirePrefilterCache.addEvent(event)) return;
