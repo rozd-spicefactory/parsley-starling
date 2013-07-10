@@ -188,17 +188,27 @@ public class StarlingConfigure
         }
         else
         {
-            dispatchEvent();
+            dispatchConfigurationEvent();
         }
     }
 
     private function addedToStage(event:Event):void
     {
         _view.removeEventListener(Event.ADDED_TO_STAGE, addedToStage);
-        dispatchEvent();
+
+        // delay dispatching starlingConfigureView event to next frame,
+        // it's needed at least for cairngorm-navigation
+        _view.addEventListener(Event.ENTER_FRAME, enterFrame);
     }
 
-    private function dispatchEvent():void
+    private function enterFrame(event:Event):void
+    {
+        _view.removeEventListener(Event.ENTER_FRAME, enterFrame);
+
+        dispatchConfigurationEvent();
+    }
+
+    private function dispatchConfigurationEvent():void
     {
         var config:ViewConfiguration = new DefaultViewConfiguration(_view, _target, _configId);
         config.reuse = _reuse;
