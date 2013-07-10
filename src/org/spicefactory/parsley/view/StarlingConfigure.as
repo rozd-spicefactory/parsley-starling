@@ -5,7 +5,7 @@
  * Time: 10:02 AM
  * To change this template use File | Settings | File Templates.
  */
-package org.spicefactory.parsley.starling.view
+package org.spicefactory.parsley.view
 {
 import org.spicefactory.lib.logging.LogContext;
 import org.spicefactory.lib.logging.Logger;
@@ -21,9 +21,9 @@ import org.spicefactory.parsley.starling.events.StarlingViewConfigurationEvent;
 import starling.display.DisplayObject;
 import starling.events.Event;
 
-public class Configure
+public class StarlingConfigure
 {
-    private static const log:Logger = LogContext.getLogger(Configure);
+    private static const log:Logger = LogContext.getLogger(StarlingConfigure);
 
     private var _view:DisplayObject;
     private var _target:Object;
@@ -48,15 +48,15 @@ public class Configure
      * @param view the view that demarcates the lifecycle of the target instance
      * @return a new Configure instance for further setup options
      */
-    public static function view(view:DisplayObject):Configure
+    public static function view(view:DisplayObject):StarlingConfigure
     {
-        return new Configure(view);
+        return new StarlingConfigure(view);
     }
 
     /**
      * @private
      */
-    function Configure(view:DisplayObject)
+    function StarlingConfigure(view:DisplayObject)
     {
         _view = view;
     }
@@ -67,7 +67,7 @@ public class Configure
      * @param target the target to get processed by the nearest Context in the view hierarchy
      * @return this Configure instance for method chaining
      */
-    public function target(target:Object):Configure
+    public function target(target:Object):StarlingConfigure
     {
         _target = target;
         return this;
@@ -85,7 +85,7 @@ public class Configure
      * lifecycles of the view
      * @return this Configure instance for method chaining
      */
-    public function reuse(value:Boolean):Configure
+    public function reuse(value:Boolean):StarlingConfigure
     {
         _reuse = new Flag(value);
         return this;
@@ -100,7 +100,7 @@ public class Configure
      * from the stage
      * @return this Configure instance for method chaining
      */
-    public function autoremove(value:Boolean):Configure
+    public function autoremove(value:Boolean):StarlingConfigure
     {
         _autoremove = new Flag(value);
         return this;
@@ -114,7 +114,7 @@ public class Configure
      * @param processor the processor to use for the target instance
      * @return this Configure instance for method chaining
      */
-    public function processor(processor:ViewProcessor):Configure
+    public function processor(processor:ViewProcessor):StarlingConfigure
     {
         _processor = processor;
         return this;
@@ -128,7 +128,7 @@ public class Configure
      * @param lifecycle the instance that controls the lifecycle of the view
      * @return this Configure instance for method chaining
      */
-    public function lifecycle(lifecycle:ViewLifecycle):Configure
+    public function lifecycle(lifecycle:ViewLifecycle):StarlingConfigure
     {
         _lifecycle = lifecycle;
         return this;
@@ -143,7 +143,7 @@ public class Configure
      * @param definition the object definition to use to configure the target
      * @return this Configure instance for method chaining
      */
-    public function definition(definition:DynamicObjectDefinition):Configure
+    public function definition(definition:DynamicObjectDefinition):StarlingConfigure
     {
         _definition = definition;
         return this;
@@ -159,7 +159,7 @@ public class Configure
      * matching this target instance
      * @return this Configure instance for method chaining
      */
-    public function configId(configId:String):Configure
+    public function configId(configId:String):StarlingConfigure
     {
         _configId = configId;
         return this;
@@ -171,7 +171,7 @@ public class Configure
      * @param callback a callback to invoke when the processing of the view configuration has been completed
      * @return this Configure instance for method chaining
      */
-    public function complete(callback:Function):Configure
+    public function complete(callback:Function):StarlingConfigure
     {
         _completeHandler = callback;
         return this;
