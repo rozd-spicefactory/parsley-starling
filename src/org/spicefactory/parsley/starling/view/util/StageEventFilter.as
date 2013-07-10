@@ -17,6 +17,13 @@ import starling.events.Event;
  */
 public class StageEventFilter
 {
+    private var view:DisplayObject;
+    private var removedHandler:Function;
+    private var addedHandler:Function;
+
+    private var removedInCurrentFrame:Boolean;
+
+
     /**
      * Creates a new instance that filters events for the specified view.
      *
@@ -24,38 +31,46 @@ public class StageEventFilter
      * @param removedHandler the handler to invoke for filtered removedFromStage events
      * @param removedHandler the handler to invoke for filtered addedToStage events
      */
-    function StageEventFilter(view:DisplayObject, removedHandler:Function, addedHandler:Function = null)
-    {
+    function StageEventFilter (view:DisplayObject, removedHandler:Function, addedHandler:Function = null) {
         this.view = view;
         this.removedHandler = removedHandler;
         this.addedHandler = addedHandler;
-
         view.addEventListener(Event.ADDED_TO_STAGE, addedToStage);
         view.addEventListener(Event.REMOVED_FROM_STAGE, removedFromStage);
     }
 
-    private var view:DisplayObject;
-    private var removedHandler:Function;
-    private var addedHandler:Function;
 
     /**
      * Instructs this filter to stop listening to stage events.
      */
-    public function dispose():void
-    {
+    public function dispose () : void {
         view.removeEventListener(Event.ADDED_TO_STAGE, addedToStage);
         view.removeEventListener(Event.REMOVED_FROM_STAGE, removedFromStage);
+        view.removeEventListener(Event.ENTER_FRAME, enterFrame);
     }
 
-    private function addedToStage(event:Event):void
-    {
-        if (addedHandler != null)
+    private function addedToStage (event:Event) : void {
+        if (removedInCurrentFrame) {
+            resetFrame();
+        }
+        else if (addedHandler != null) {
             addedHandler(view);
+        }
     }
 
-    private function removedFromStage(event:Event):void
-    {
+    private function removedFromStage (event:Event) : void {
+        removedInCurrentFrame = true;
+        view.addEventListener(Event.ENTER_FRAME, enterFrame);
+    }
+
+    private function enterFrame (event:Event) : void {
+        resetFrame();
         removedHandler(view);
+    }
+
+    private function resetFrame () : void {
+        removedInCurrentFrame = false;
+        view.removeEventListener(Event.ENTER_FRAME, enterFrame);
     }
 }
 }

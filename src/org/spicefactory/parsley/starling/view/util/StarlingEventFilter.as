@@ -34,38 +34,80 @@ public class StarlingEventFilter
         this.removedHandler = removedHandler;
         this.addedHandler = addedHandler;
 
-        view.addEventListener(Event.ADDED, view_addedHandler);
-        view.addEventListener(Event.REMOVED, view_removedHandler);
+        view.addEventListener(Event.ADDED, added);
+        view.addEventListener(Event.REMOVED, removed);
     }
 
     private var view:DisplayObject;
     private var removedHandler:Function;
     private var addedHandler:Function;
 
+    private var addedInCurrentFrame:Boolean;
+    private var removedInCurrentFrame:Boolean;
+
     /**
      * Instructs this filter to stop listening to stage events.
      */
     public function dispose():void
     {
-        view.removeEventListener(Event.ADDED, view_addedHandler);
-        view.removeEventListener(Event.REMOVED, view_removedHandler);
+        view.removeEventListener(Event.ADDED, added);
+        view.removeEventListener(Event.REMOVED, removed);
+        view.removeEventListener(Event.ENTER_FRAME, enterFrame);
     }
 
-    private function view_addedHandler(event:Event):void
+    private function resetFrame():void
+    {
+        addedInCurrentFrame = false;
+        removedInCurrentFrame = false;
+
+        view.removeEventListener(Event.ENTER_FRAME, enterFrame);
+    }
+
+    private function added(event:Event):void
     {
         if (event.target != view) // ignore bubbling
             return;
 
-        if (addedHandler != null)
-            addedHandler(view);
+        if (removedInCurrentFrame)
+        {
+            resetFrame();
+        }
+        else
+        {
+            addedInCurrentFrame = true;
+            view.addEventListener(Event.ENTER_FRAME, enterFrame)
+        }
     }
 
-    private function view_removedHandler(event:Event):void
+    private function removed(event:Event):void
     {
         if (event.target != view) // ignore bubbling
             return;
 
-        removedHandler(view);
+        if (addedInCurrentFrame)
+        {
+            resetFrame();
+        }
+        else
+        {
+            removedInCurrentFrame = true;
+            view.addEventListener(Event.ENTER_FRAME, enterFrame);
+        }
+    }
+
+    private function enterFrame(event:Event):void
+    {
+        if (addedInCurrentFrame)
+        {
+            if (addedHandler != null)
+                addedHandler(view);
+        }
+        else if (removedInCurrentFrame)
+        {
+            removedHandler(view);
+        }
+
+        resetFrame();
     }
 }
 }
