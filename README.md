@@ -3,7 +3,7 @@ parsley-starling
 
 Enables Parsley for Starling projects
 
-**NOTE**: This library requires modified version of Parsley from [rozdonmobile/parsley-core](https://github.com/rozdonmobile/parsley-starling)
+**NOTE**: This library requires modified version of Parsley from [rozdonmobile/parsley-core](https://github.com/rozdonmobile/parsley-core)
 
 ## Implementation Notes
 * Requires modified version of Parsley with less dependency on Flash prebuilt classes such as DisplayObject and Event. it could be founf here [rozdonmobile/parsley-core](https://github.com/rozdonmobile/parsley-starling)
