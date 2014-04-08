@@ -2,7 +2,7 @@
 <module type="Flex" version="4">
   <component name="FlexBuildConfigurationManager" active="parsley-starling">
     <configurations>
-      <configuration name="parsley-starling" pure-as="true" output-type="Library" output-file="parsley-starling.swc" output-folder="$USER_HOME$/labs/parsley-test/out/production/parsley-starling">
+      <configuration name="parsley-starling" pure-as="true" output-type="Library" output-file="parsley-starling.swc" output-folder="$MODULE_DIR$/bin">
         <dependencies target-player="11.6">
           <entries>
             <entry library-id="481a0e98-7e72-42e5-a58a-aa36db4b5e01">

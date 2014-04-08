@@ -52,15 +52,12 @@ public class StarlingEventFilter
     {
         view.removeEventListener(Event.ADDED, added);
         view.removeEventListener(Event.REMOVED, removed);
-        view.removeEventListener(Event.ENTER_FRAME, enterFrame);
     }
 
     private function resetFrame():void
     {
         addedInCurrentFrame = false;
         removedInCurrentFrame = false;
-
-        view.removeEventListener(Event.ENTER_FRAME, enterFrame);
     }
 
     private function added(event:Event):void
@@ -68,15 +65,8 @@ public class StarlingEventFilter
         if (event.target != view) // ignore bubbling
             return;
 
-        if (removedInCurrentFrame)
-        {
-            resetFrame();
-        }
-        else
-        {
-            addedInCurrentFrame = true;
-            view.addEventListener(Event.ENTER_FRAME, enterFrame)
-        }
+        if (addedHandler != null)
+            addedHandler(view);
     }
 
     private function removed(event:Event):void
@@ -84,30 +74,7 @@ public class StarlingEventFilter
         if (event.target != view) // ignore bubbling
             return;
 
-        if (addedInCurrentFrame)
-        {
-            resetFrame();
-        }
-        else
-        {
-            removedInCurrentFrame = true;
-            view.addEventListener(Event.ENTER_FRAME, enterFrame);
-        }
-    }
-
-    private function enterFrame(event:Event):void
-    {
-        if (addedInCurrentFrame)
-        {
-            if (addedHandler != null)
-                addedHandler(view);
-        }
-        else if (removedInCurrentFrame)
-        {
-            removedHandler(view);
-        }
-
-        resetFrame();
+        removedHandler(view);
     }
 }
 }
