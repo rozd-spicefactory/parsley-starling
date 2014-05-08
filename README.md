@@ -1,12 +1,12 @@
 parsley-starling
 ================
 
-Enables Parsley for Starling projects
+Enables [Parsley](http://www.spicefactory.org/parsley/) for [Starling](http://gamua.com/starling/)-based projects
 
-**NOTE**: This library requires modified version of Parsley from [rozdonmobile/parsley-core](https://github.com/rozdonmobile/parsley-core)
+**NOTE**: This library requires modified version of Parsley from [rozd-spicefactory/parsley-core](https://github.com/rozd-spicefactory/parsley-core)
 
 ## Implementation Notes
-* Requires modified version of Parsley with less dependency on Flash prebuilt classes such as DisplayObject and Event. it could be founf here [rozdonmobile/parsley-core](https://github.com/rozdonmobile/parsley-starling)
+* Requires modified version of Parsley with less dependency on Flash prebuilt classes such as DisplayObject and Event. it could be founf here [rozd-spicefactory/parsley-core](https://github.com/rozd-spicefactory/parsley-starling)
 * Configuration process is triggered by `Event.ADDED` event, instead of `Event.ADDED_TO_STAGE` as in standard Flash implementation of Parsley. It is due to Starling dispatches `Event.ADDED_TO_STAGE` without _bubbles_ flag.
 
 ## Usage
