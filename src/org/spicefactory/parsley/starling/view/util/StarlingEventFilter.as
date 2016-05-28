@@ -34,8 +34,8 @@ public class StarlingEventFilter
         this.removedHandler = removedHandler;
         this.addedHandler = addedHandler;
 
-        view.addEventListener(Event.ADDED, added);
-        view.addEventListener(Event.REMOVED, removed);
+        view.addEventListener(Event.ADDED_TO_STAGE, added);
+        view.addEventListener(Event.REMOVED_FROM_STAGE, removed);
     }
 
     private var view:DisplayObject;
@@ -50,8 +50,8 @@ public class StarlingEventFilter
      */
     public function dispose():void
     {
-        view.removeEventListener(Event.ADDED, added);
-        view.removeEventListener(Event.REMOVED, removed);
+        view.removeEventListener(Event.ADDED_TO_STAGE, added);
+        view.removeEventListener(Event.REMOVED_FROM_STAGE, removed);
     }
 
     private function resetFrame():void
